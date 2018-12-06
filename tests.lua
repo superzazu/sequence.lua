@@ -3,6 +3,11 @@
 local test = require "u-test"
 local sequence = require "sequence"
 
+local function get_lua_version()
+    local major, minor = _VERSION:match("Lua (%d).(%d)")
+    return major * 10 + minor
+end
+
 test.can_add_elements_with_add = function()
     local mysequence = sequence.new()
 
@@ -170,8 +175,12 @@ test.can_use_foreach = function()
     test.equal(count, 14)
 end
 
--- note: this test only work on Lua 5.2+ (__len metatable)
 test.can_use_length_operator_on_sequences = function()
+    -- note: this test only work on Lua 5.2+ (use of __len metatable)
+    if get_lua_version() < 52 then
+        return
+    end
+
     local mysequence = sequence.new()
 
     for i = 1, 10 do

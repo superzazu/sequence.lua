@@ -74,39 +74,26 @@ sequence.add = function(s, e)
         s.last.next = new_node
     end
 
-    -- finding the first index that contains nil
-    local index = 1
-    while true do
-        if s[index] == nil then
-            break
-        end
-        index = index + 1
-    end
-
-    s[index] = new_node
-    s.last = s[index]
+    s.last = new_node
     s.count = s.count + 1
 end
 
 -- deletes the first instance of element e in sequence s
 sequence.del = function(s, e)
-    for key, value in pairs(s) do
-        if type(key) == "number" and value.obj == e then
-            if value.next then
-                value.next.prev = value.prev
+    for element in sequence.all(s, true) do
+        if element.obj == e then
+            if element.next then
+                element.next.prev = element.prev
             else
-                s.last = value.prev
+                s.last = element.prev
             end
-            if value.prev then
-                value.prev.next = value.next
+            if element.prev then
+                element.prev.next = element.next
             else
-                s.first = value.next
+                s.first = element.next
             end
 
             s.count = s.count - 1
-            -- we avoid using table.remove so that the remaining objects
-            -- are not shifted down
-            s[key] = nil
             break
         end
     end
@@ -114,7 +101,9 @@ end
 
 -- iterates through all the elements of a sequence s in order
 -- during iteration, you can safely remove and add elements to the sequence
-sequence.all = function(s)
+-- "return_node" returns the node instead of the object stored in sequence.
+sequence.all = function(s, return_node)
+    return_node = return_node or false
     local current_node = -1
     return function()
         if current_node == -1 then
@@ -124,7 +113,11 @@ sequence.all = function(s)
         end
 
         if current_node then
-            return current_node.obj
+            if return_node == true then
+                return current_node
+            else
+                return current_node.obj
+            end
         end
 
         return nil

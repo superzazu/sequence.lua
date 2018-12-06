@@ -1,6 +1,6 @@
 # sequence.lua
 
-A Lua library that provides a doubly linked list, allowing you to easily (and safely) add / remove elements to a sequence, even while iterating.
+A Lua library that provides a doubly linked list, allowing you to safely add and remove elements to a sequence, even while iterating on it.
 
 This library is heavily inspired by PICO-8 functions "add", "del", "all" and "foreach".
 
@@ -23,8 +23,11 @@ for monster in monsters:all() do
     end
 end
 
-print(monsters.count) -- 3
-```
+monsters:foreach(function(m)
+    print(m.hp)
+end)
 
-Note: if you use Lua 5.1, please use `mysequence.count` instead of `#mysequence`.
+print(monsters.count) -- 3
+print(#monsters) -- only available for Lua 5.2+
+```
 
